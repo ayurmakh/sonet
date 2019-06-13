@@ -18,8 +18,11 @@
         </select>
         <input type="text" v-model="phone" placeholder="Телефон">
         <input type="text" v-model="email" placeholder="E-mail">
-        <input type="password" v-model="pass" placeholder="Пароль" :class={"validate"}>
-        <input type="password" v-model="passConfirm" placeholder="Подтвердите пароль" @input="validateConfirm()">
+        <input type="password" v-model="pass" placeholder="Пароль" :class="{'input-error': !passValidate}" @input="validate">
+        <p v-if="!passValidate">Количество символов должно быть не меньше 8</p>
+        <input type="password" v-model="passConfirm" placeholder="Подтвердите пароль" 
+          :class="{'input-error': !passValidateConfirm}" @input="validateConfirm">
+        <p v-if="!passValidateConfirm">Пароли не совпадают</p>
         <button>Зарегистрироваться</button>
     </div>
 </template>
@@ -41,12 +44,23 @@ export default {
       pass: '',
       passConfirm: '',
       countries: [],
-      cities: []
+      cities: [],
+      passValidate: true,
+      passValidateConfirm: true
     }
   },
   methods: {
     validate: function() {
-      if (pass.length)
+      if (this.pass.length >= 8)
+        this.passValidate = true;
+      else
+        this.passValidate = false;
+    },
+    validateConfirm: function() {
+      if (this.pass == this.passConfirm)
+        this.passValidateConfirm = true;
+      else
+        this.passValidateConfirm = false;
     }
   },
   watch: {
