@@ -1,0 +1,78 @@
+@import "base"
+@import "fonts"
+
+header
+  display: flex
+  justify-content: space-between
+  margin: 40px 60px
+  font-weight: 400
+
+  h1
+    font-size: 40px
+    span
+      color: crimson
+
+  nav
+    display: flex
+    align-items: flex-end
+    font-size: 20px
+    a
+      font-weight: bold
+      margin-left: 10px
+      transition: color .3s ease
+
+      &:hover 
+        color: crimson
+
+input
+  width: 100%
+  height: 30px
+  font-size: 15px
+
+.form
+  margin: 0 auto
+  width: 230px
+  display: flex
+  flex-direction: column
+  align-items: center
+
+  button
+    margin-top: 20px
+
+  input
+    margin-top: 10px
+
+    &:nth-child(1)
+      margin-top: 0
+
+  a
+    margin-top: 10px
+    color: crimson
+    font-size: 16px
+  div
+    width: 100%
+    display: flex
+    align-items: center
+    *
+      margin-right: 10px
+      
+    input
+      width: 15px
+      margin-top: 5px
+    
+
+button 
+  width: 90px
+  height: 35px
+  border: 3px solid crimson
+  background-color: #fff
+  font-size: 15px
+  transition: background-color .3s ease, color .3s ease
+  cursor: pointer
+  font-weight: 900
+  &:hover
+    background-color: crimson
+    color: #fff
+
+.router-link-exact-active
+  color: crimson
