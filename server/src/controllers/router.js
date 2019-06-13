@@ -14,7 +14,6 @@ app.use(async (ctx, next) => {
 
 router.post('/signin', async (ctx) => {
 	var userData = ctx.request.body;
-	console.log(ctx.request.body);
 	var res = await db.get(userData.login, userData.pass);
 	if (res.result)
 		ctx.body = { result: true};
@@ -33,6 +32,14 @@ router.post('/signup', async (ctx) => {
 
 router.get('/users', async (ctx) => {
 	ctx.body = await db.list();
+});
+
+router.get('/countries', async (ctx) => {
+	ctx.body = await db.countries();
+});
+
+router.get('/cities', async (ctx) => {
+	ctx.body = await db.cities(ctx.url.split('=')[1]);
 });
 
 module.exports = router;

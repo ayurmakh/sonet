@@ -1,31 +1,80 @@
 <template>
     <div class="form"> 
-        <input type="text" v-model="surname" placeholder="Surname">
-        <input type="text" v-model="name" placeholder="Name">
+        <input type="text" v-model="surname" placeholder="Фамилия">
+        <input type="text" v-model="name" placeholder="Имя">
         <div>
-            <label for="male">Male</label>
-            <input type="radio" v-model="gender" id="male" class="radio">
-            <label for="female">Female</label>
-            <input type="radio" v-model="gender" id="female" class="radio">
+            <label for="male">Мужской</label>
+            <input type="radio" v-model="gender" value="male" class="radio" name="gender">
+            <label for="female">Женский</label>
+            <input type="radio" v-model="gender" value="female" class="radio" name="gender">
         </div>
-        <input type="text" v-model="country" placeholder="Country">
-        <input type="text" v-model="city" placeholder="City">
-        <input type="text" v-model="phone" placeholder="Phone">
+        <select v-model="country">
+          <option disabled value="">Выберите страну</option>
+          <option v-for="item in countries" :key="item.id">{{ item.name }}</option>
+        </select>
+        <select v-model="city">
+          <option disabled value="">Выберите город</option>
+          <option v-for="item in cities" :key="item.id">{{ item.name }}</option>
+        </select>
+        <input type="text" v-model="phone" placeholder="Телефон">
         <input type="text" v-model="email" placeholder="E-mail">
-        <input type="password" v-model="pass" placeholder="Password">
-        <button>Sign up</button>
+        <input type="password" v-model="pass" placeholder="Пароль" :class={"validate"}>
+        <input type="password" v-model="passConfirm" placeholder="Подтвердите пароль" @input="validateConfirm()">
+        <button>Зарегистрироваться</button>
     </div>
 </template>
 
 <script>
+import axios from 'axios'
 
-export default {
+export default {  
   name: 'signup',
   data() {
     return {
-      login: "",
-      pass: ""
+      surname: '',
+      name: '',
+      gender: '',
+      country: '',
+      city: '',
+      phone: '',
+      email: '',
+      pass: '',
+      passConfirm: '',
+      countries: [],
+      cities: []
     }
+  },
+  methods: {
+    validate: function() {
+      if (pass.length)
+    }
+  },
+  watch: {
+    country: async function() {
+      let country = {};
+
+      this.countries.forEach(item => {
+        if (item.name == this.country)
+          country = item;
+      })
+
+      if (!country.hasOwnProperty('cities')) {
+        let response = await axios.get('http://localhost:3000/cities', {
+          params: {
+            countryId: country.id
+          }
+        });
+        if (response.data.result && response.data.rows.length > 0)
+          country.cities = response.data.rows;
+      }
+
+      this.cities = country.cities;
+    }
+  },
+  mounted: async function() {
+    let response = await axios.get('http://localhost:3000/countries');
+    if (response.data.result) 
+      this.countries = response.data.rows;
   }
 }
 </script>

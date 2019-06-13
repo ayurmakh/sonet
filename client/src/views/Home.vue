@@ -1,9 +1,9 @@
 <template>
   <div class="form">
-    <input type="text" v-model="login" placeholder="Phone or e-mail">
-    <input type="password" v-model="pass" placeholder="Password">
-    <button>Sign in</button>
-    <a href="#">Forgot password?</a>
+    <input type="text" v-model="login" placeholder="Телефон или e-mail">
+    <input type="password" v-model="pass" placeholder="Пароль">
+    <button>Войти</button>
+    <a href="#">Забыли пароль?</a>
   </div>
 </template>
 

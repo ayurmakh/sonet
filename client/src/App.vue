@@ -3,8 +3,8 @@
     <header>
       <a href="/"><h1>SO<span>NET</span></h1></a>
       <nav>
-        <router-link to="/">Sign in</router-link>
-        <router-link to="/signup">Sign up</router-link>
+        <router-link to="/">Вход</router-link>
+        <router-link to="/signup">Регистрация</router-link>
       </nav>
     </header>
     <router-view/>

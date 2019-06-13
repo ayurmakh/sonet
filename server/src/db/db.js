@@ -19,6 +19,26 @@ module.exports.list = async function list() {
 	}
 }
 
+module.exports.countries = async function countries() {
+	try {
+		var res = await client.query('select * from countries');
+		return { result: true, rows: res.rows };
+	} catch (err) {
+		console.log(err);
+		return { result: false };
+	}
+}
+
+module.exports.cities = async function cities(countryId) {
+	try {
+		var res = await client.query(`select * from cities where country=${countryId}`);
+		return { result: true, rows: res.rows };
+	} catch (err) {
+		console.log(err);
+		return { result: false };
+	}
+}
+
 module.exports.add = async function add(name, login, pass) {
 	try {
 		await client.query(`insert into usr(name, login, pass) values(\'${name}\', \'${login}\', \'${pass}\')`);
