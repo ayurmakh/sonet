@@ -13,21 +13,11 @@ app.use(async (ctx, next) => {
 });
 
 router.post('/signin', async (ctx) => {
-	var userData = ctx.request.body;
-	var res = await db.get(userData.login, userData.pass);
-	if (res.result)
-		ctx.body = { result: true};
-	else
-		ctx.body = { result: false};
+	ctx.body = await db.get(ctx.request.body);
 });
 
 router.post('/signup', async (ctx) => {
-	var userData = ctx.request.body;
-	var res = await db.add(userData.name, userData.login, userData.pass);
-	if (res.result)
-		ctx.body = { result: true};
-	else
-		ctx.body = { result: false};
+	ctx.body = await db.add(ctx.request.body);
 });
 
 router.get('/users', async (ctx) => {

@@ -39,21 +39,40 @@ module.exports.cities = async function cities(countryId) {
 	}
 }
 
-module.exports.add = async function add(name, login, pass) {
+module.exports.add = async function add(userData) {
 	try {
-		await client.query(`insert into usr(name, login, pass) values(\'${name}\', \'${login}\', \'${pass}\')`);
+		await client.query(`insert into usr(
+			surname,
+			name,
+			gender,
+			country_id,
+			city_id,
+			phone,
+			email,
+			pass
+		) values(
+			\'${userData.surname}\',
+			\'${userData.name}\',
+			\'${userData.gender}\',
+			${userData.countryId},
+			${userData.cityId},
+			\'${userData.phone}\',
+			\'${userData.email}\',
+			\'${userData.pass}\')`);
 		return { result: true };
 	} catch(err) {
-		console.log(err);
-		return { result: false };
+		return { 
+			result: false,
+			errMess: err.message
+		 };
 	}
 }
 
-module.exports.get = async function get(login, pass) {
+module.exports.get = async function get(userData) {
 	try {
-		var res = await client.query(`select * from usr where login=\'${login}\' and pass=\'${pass}\'`);
+		var res = await client.query(`select * from usr where (email=\'${userData.login}\' or phone=\'${userData.login}\') and pass=\'${userData.pass}\'`);
 		if (res.rows.length > 0)
-			return { result: true, name: res.rows[0].name };
+			return { result: true };
 		else
 			return { result: false };
 	} catch (err) {
