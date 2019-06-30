@@ -1,28 +1,25 @@
-<template>
-  <div>
-    <div class="form" v-if="!result">
-      <p v-if="sended && !result">Неверные логин или пароль</p>
-      <input
-        type="text"
-        v-model="login"
-        placeholder="Телефон или e-mail"
-        :class="{'input-error': !loginValidate}"
-        @input="validateLogin"
-      >
-      <p v-if="!loginValidate">Это поле не должно быть пустым</p>
-      <input
-        type="password"
-        v-model="pass"
-        placeholder="Пароль"
-        :class="{'input-error': !passValidate}"
-        @input="validatePass"
-      >
-      <p v-if="!passValidate">Это поле не должно быть пустым</p>
-      <button @click="send">Войти</button>
-      <a href="#">Забыли пароль?</a>
-    </div>
-    <div class="form" v-if="result">{{ mess }}</div>
-  </div>
+<template lang="pug">
+    .background
+        .wrapper
+            .categories-wrapper
+                .categories
+                    .category(v-for="(item, index) in categories" 
+                    @mouseover="hideSvgIndex = index" 
+                    @mouseleave="hideSvgIndex = ''"
+                    @click="currentCategory = index + 1")
+                        span {{ item.name }}
+                        svg(:class="{hidden: hideSvgIndex === index}")
+                            line(x1="10px" y1="0px" x2="20px" y2="10px" stroke="#dddddd" stroke-width="2px")
+                            line(x1="10px" y1="20px" x2="20px" y2="10px" stroke="#dddddd" stroke-width="2px")
+            .goods
+                .product(v-for="item in goods")
+                    .img-wrapper
+                        img(:src="item.img")
+                    .name-wrapper
+                        p {{ item.name }}
+                    .price-wrapper
+                        p {{ item.price }} <i class="fas fa-ruble-sign"></i>
+                    button.button-buy Купить
 </template>
 
 <script>
@@ -32,57 +29,134 @@ export default {
   name: "home",
   data() {
     return {
-      login: "",
-      pass: "",
-      loginValidate: true,
-      passValidate: true,
-      sended: false,
-      result: false,
-      mess: "Вы успешно вошли в систему!"
+      categories: [],
+      hideSvgIndex: "",
+      goods: [],
+      currentCategory: 1
     };
   },
   methods: {
-    validateLogin: function() {
-      if (this.login.length > 0) this.loginValidate = true;
-      else this.loginValidate = false;
-    },
-    validatePass: function() {
-      if (this.pass.length > 0) this.passValidate = true;
-      else this.passValidate = false;
-    },
-    send: async function() {
-      if (this.login.length == 0) this.loginValidate = false;
-      if (this.pass.length == 0) this.passValidate = false;
-
-      if (!this.passValidate || !this.loginValidate) {
-        alert("Заполните поля, помеченные красным");
-        return;
-      }
-
-      await axios
-        .post(
-          "http://localhost:3000/signin",
-          {
-            login: this.login,
-            pass: this.pass
-          },
-          {
-            withCredentials: true
-          }
-        )
-        .then(response => {
-          this.sended = true;
-          if (response.data.result) this.result = true;
-          else this.result = false;
-        });
-    }
+        loadGoods: async function() {
+            if (!this.categories[this.currentCategory - 1].loaded)
+                await axios
+                    .get("http://localhost:3000/goods", {
+                        params: {
+                            category: this.currentCategory
+                        }
+                    })
+                    .then(response => {
+                        if (response.data.result) {
+                            this.categories[this.currentCategory - 1].goods = response.data.rows;
+                            this.categories[this.currentCategory - 1].loaded = true;
+                        }
+                    });       
+            this.goods = this.categories[this.currentCategory - 1].goods;
+        }
   },
   mounted: async function() {
-    let response = await axios.get("http://localhost:3000", {
-      withCredentials: true
+    await axios.get("http://localhost:3000/categories").then(response => {
+        response.data.rows.forEach(item => {
+            this.categories.push({ 
+                name: item, 
+                loaded: false, 
+                goods: [] 
+            });
+        });
     });
-    console.log(response);
-    this.result = response.data.result;
+    this.loadGoods();
+  },
+    watch: {
+        currentCategory: function() {
+            this.loadGoods();
+        }
   }
 };
 </script>
+
+<style lang="scss" scoped>
+$light-grey: #f6f6f6;
+$dark-grey: #dddddd;
+
+.background {
+  background-color: $light-grey;
+}
+
+.wrapper {
+  display: flex;
+  width: 1200px;
+  margin: 0 auto;
+  padding: 10px 0;
+}
+
+.categories {
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-top: 1px solid $dark-grey;
+  border-bottom: 1px solid $dark-grey;
+  border-left: 2px solid crimson;
+  border-radius: 3px;
+}
+
+.category {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  height: 40px;
+  box-sizing: border-box;
+  cursor: pointer;
+  border-bottom: 1px solid $dark-grey;
+  border-right: 1px solid $dark-grey;
+  &:hover {
+    color: crimson;
+    border-right: none;
+  }
+  &:nth-last-child(1) {
+    border-bottom: none;
+  }
+  svg {
+    width: 25px;
+  }
+}
+
+.goods {
+  margin-left: 20px;
+  width: 830px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 10px;
+}
+
+.product {
+  display: flex;
+  height: 400px;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid $dark-grey;
+  background-color: white;
+  padding: 10px;
+  box-sizing: border-box;
+  .img-wrapper {
+    height: 50%;
+    img {
+      height: 100%;
+    }
+  }
+  .name-wrapper {
+      height: 20%;
+  }
+  .price-wrapper {
+    margin-top: 20px;
+    width: 100%;
+    font-size: 28px;
+  }
+  .button-buy {
+    margin-top: 20px;
+  }
+}
+
+.hidden {
+  display: none;
+}
+</style>

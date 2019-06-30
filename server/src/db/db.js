@@ -19,6 +19,18 @@ module.exports.getCountries = async () => {
 	}
 }
 
+module.exports.getCategories = async () => {
+	try {
+		var res = await client.query('select * from categories');
+		let categories = [];
+		res.rows.forEach(item => categories.push(item.name));
+		return { result: true, rows: categories };
+	} catch (err) {
+		console.log(err);
+		return { result: false };
+	}
+}
+
 module.exports.getCities = async countryId => {
 	try {
 		var res = await client.query(`select * from cities where country_id=${countryId}`);
@@ -28,6 +40,16 @@ module.exports.getCities = async countryId => {
 		return { result: false };
 	}
 }
+
+module.exports.getGoods = async category => {
+	try {
+		var res = await client.query(`select * from goods where category=${category}`);
+		return { result: true, rows: res.rows };
+	} catch (err) {
+		console.log(err);
+		return { result: false };
+	}
+};
 
 module.exports.addUsr = async userData => {
 
