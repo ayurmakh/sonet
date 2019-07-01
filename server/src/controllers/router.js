@@ -55,6 +55,7 @@ router.get('/categories', async ctx => {
 
 router.get('/goods', async ctx => {
 	ctx.body = await db.getGoods(ctx.url.split('=')[1]);
+	console.log(typeof ctx.body);
 });
 
 module.exports = router;

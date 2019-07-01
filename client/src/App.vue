@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header>
-      <a href="/"><h1>SO<span>NET</span></h1></a>
+      <router-link to="/"><h1>SO<span>NET</span></h1></router-link>
       <nav>
         <div v-if="!logged()">
           <router-link to="/signin">Вход</router-link>

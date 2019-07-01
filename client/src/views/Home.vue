@@ -8,13 +8,14 @@
                     @mouseleave="hideSvgIndex = ''"
                     @click="currentCategory = index + 1")
                         span {{ item.name }}
-                        svg(:class="{hidden: hideSvgIndex === index}")
+                        //svg(:class="{hidden: hideSvgIndex === index}")
+                        svg
                             line(x1="10px" y1="0px" x2="20px" y2="10px" stroke="#dddddd" stroke-width="2px")
                             line(x1="10px" y1="20px" x2="20px" y2="10px" stroke="#dddddd" stroke-width="2px")
             .goods
                 .product(v-for="item in goods")
                     .img-wrapper
-                        img(:src="item.img")
+                        img(:src="'data:image/jpeg;base64,'+item.img")
                     .name-wrapper
                         p {{ item.name }}
                     .price-wrapper
@@ -32,43 +33,50 @@ export default {
       categories: [],
       hideSvgIndex: "",
       goods: [],
-      currentCategory: 1
+      currentCategory: 1,
+      imageBytes: ""
     };
   },
   methods: {
-        loadGoods: async function() {
-            if (!this.categories[this.currentCategory - 1].loaded)
-                await axios
-                    .get("http://localhost:3000/goods", {
-                        params: {
-                            category: this.currentCategory
-                        }
-                    })
-                    .then(response => {
-                        if (response.data.result) {
-                            this.categories[this.currentCategory - 1].goods = response.data.rows;
-                            this.categories[this.currentCategory - 1].loaded = true;
-                        }
-                    });       
-            this.goods = this.categories[this.currentCategory - 1].goods;
-        }
+    al: function() {
+      console.log(this.imageBytes);
+    },
+    loadGoods: async function() {
+      const fs = require("browserify-fs");
+      if (!this.categories[this.currentCategory - 1].loaded)
+        await axios
+          .get("http://localhost:3000/goods", {
+            params: {
+              category: this.currentCategory
+            }
+          })
+          .then(response => {
+            if (response.data.result) {
+              this.categories[this.currentCategory - 1].goods =
+                response.data.rows;
+              this.categories[this.currentCategory - 1].loaded = true;
+            }
+          });
+
+      this.goods = this.categories[this.currentCategory - 1].goods;
+    }
   },
   mounted: async function() {
     await axios.get("http://localhost:3000/categories").then(response => {
-        response.data.rows.forEach(item => {
-            this.categories.push({ 
-                name: item, 
-                loaded: false, 
-                goods: [] 
-            });
+      response.data.rows.forEach(item => {
+        this.categories.push({
+          name: item,
+          loaded: false,
+          goods: []
         });
+      });
     });
     this.loadGoods();
   },
-    watch: {
-        currentCategory: function() {
-            this.loadGoods();
-        }
+  watch: {
+    currentCategory: function() {
+      this.loadGoods();
+    }
   }
 };
 </script>
@@ -110,7 +118,7 @@ $dark-grey: #dddddd;
   border-right: 1px solid $dark-grey;
   &:hover {
     color: crimson;
-    border-right: none;
+    //border-right: none;
   }
   &:nth-last-child(1) {
     border-bottom: none;
@@ -144,7 +152,7 @@ $dark-grey: #dddddd;
     }
   }
   .name-wrapper {
-      height: 20%;
+    height: 20%;
   }
   .price-wrapper {
     margin-top: 20px;

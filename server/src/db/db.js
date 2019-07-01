@@ -6,6 +6,7 @@ const client = new Client({
 	password: '',
 	port: 5432
 });
+const fs = require('fs');
 
 client.connect();
 
@@ -44,6 +45,7 @@ module.exports.getCities = async countryId => {
 module.exports.getGoods = async category => {
 	try {
 		var res = await client.query(`select * from goods where category=${category}`);
+		res.rows.forEach(item => item.img = new Buffer(fs.readFileSync(item.img_path)).toString('base64'));
 		return { result: true, rows: res.rows };
 	} catch (err) {
 		console.log(err);
