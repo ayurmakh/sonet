@@ -15,7 +15,7 @@
     "axios": "^0.19.0",
     "browserify-fs": "^1.0.0",
     "fs": "0.0.1-security",
-    "node-sass": "^4.9.0",
+    "node-sass": "^7.0.0",
     "pug": "^2.0.4",
     "pug-plain-loader": "^1.0.0",
     "sass-loader": "^7.1.0",
